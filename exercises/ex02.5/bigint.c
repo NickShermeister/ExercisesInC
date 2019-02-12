@@ -32,9 +32,17 @@ It is the caller's responsibility to free the result.
 s: string
 returns: string
 */
+char* temp;
+
 char *reverse_string(char *s) {
-    //TODO: Fill this in.
-    return "";
+  int length = strlen(s);
+  temp = (char*) malloc(length * sizeof(char));
+  int i;
+
+  for (i = 0; i < length; i++){
+    temp[i] = s[length - i - 1];
+  }
+    return temp;
 }
 
 /* ctoi: Converts a character to integer.
@@ -53,8 +61,7 @@ i: integer 0 to 9
 returns: character '0' to '9'
 */
 char itoc(int i) {
-    //TODO: Fill this in, with an appropriate assertion.
-    return '0';
+    return i + '0'; //'0' offsets the ASCII value correcly.
 }
 
 /* add_digits: Adds two decimal digits, returns the total and carry.
@@ -70,7 +77,21 @@ carry: pointer to char
 
 */
 void add_digits(char a, char b, char c, char *total, char *carry) {
-    //TODO: Fill this in.
+    //Convert chars to ints
+    int tempa = ctoi(a);
+    int tempb = ctoi(b);
+    int tempc = ctoi(c);
+    //Sum the ints we got
+    int tempd = tempa + tempb + tempc;
+    if (tempd >= 10){ //If there is a "10s" column, note that in carryout then mod it by 10.
+      *carry = '1';
+      tempd = tempd % 10;
+    }
+    else {
+      *carry = '0';
+    }
+    //Have the total pointing to the 1s character of the sum.
+    *total = itoc(tempd);
 }
 
 /* Define a type to represent a BigInt.
@@ -172,6 +193,7 @@ void test_itoc() {
 void test_add_digits() {
     char total, carry;
     add_digits('7', '4', '1', &total, &carry);
+    // printf("Total: %c\nCarr: %c\n", total, carry);
     if (total == '2' && carry == '1') {
         printf("add_digits passed\n");
     } else {
@@ -184,12 +206,12 @@ void test_add_bigint() {
     char *t = "99999999999999999999999999999999999999999999";
     char *res = "000000000000000000000000000000000000000000001";
 
-    BigInt big1 = make_bigint(s);    
+    BigInt big1 = make_bigint(s);
     BigInt big2 = make_bigint(t);
     BigInt big3 = malloc(100);
 
 	add_bigint(big1, big2, '0', big3);
-    
+
     if (strcmp(big3, res) == 0) {
         printf("add_bigint passed\n");
     } else {
@@ -205,6 +227,6 @@ int main (int argc, char *argv[])
 
     //TODO: When you have the first three functions working,
     //      uncomment the following, and it should work.
-    // test_add_bigint();
+    test_add_bigint();
     return 0;
 }

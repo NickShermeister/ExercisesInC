@@ -32,11 +32,10 @@ It is the caller's responsibility to free the result.
 s: string
 returns: string
 */
-char* temp;
 
 char *reverse_string(char *s) {
   int length = strlen(s);
-  temp = (char*) malloc(length * sizeof(char));
+  char* temp = (char*) malloc(length * sizeof(char));
   int i;
 
   for (i = 0; i < length; i++){

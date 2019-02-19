@@ -60,11 +60,12 @@ int main() {
   char number_to_be_added[BUFF_SIZE];
   int all_ints[MAX_INTS];
   int count;
-  int val;
+  long int val;
   count = 0;
   int exiting = 0;
   int i;
   int lenInput = 0;
+  char* endptr;
 
   //Clears out the value of all_ints just in case
   for (i = 0; i < MAX_INTS; i++){
@@ -96,7 +97,8 @@ int main() {
       printf("You've entered the maximum number of ints, please type control-d!\n");
     }
     else {
-      val = intConversion(number_to_be_added);
+      // val = intConversion(number_to_be_added);
+      val = strtol( number_to_be_added, &endptr, 10);
       if (val != 0){
         all_ints[count] = val;
         count++;

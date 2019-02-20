@@ -1,0 +1,14 @@
+a.out
+endswith.c
+ex03.md
+tee.c
+temp.txt
+-a
+a.out
+endswith.c
+ex03.md
+one.txt
+tee.c
+temp.txt
+three.txt
+two.txt

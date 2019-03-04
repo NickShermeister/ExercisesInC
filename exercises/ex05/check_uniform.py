@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 """Read floating point values and plot their CDF.
-
 Copyright 2016 Allen B. Downey
 License: GNU GPLv3 http://www.gnu.org/licenses/gpl.html
 """

@@ -78,19 +78,21 @@ float my_random_float2()
 // compute a random double using my algorithm
 double my_random_double()
 {
-    int x;
-    int exp = 64; //Double is 64 bits
-    int mask = 1;
-    int mant;
+    long long int x, y, z;
+    long long int exp = 1022; //0-2048
+    long long int mask = 1;
+    long long int mant;
 
     union {
-        float f;
-        int i;
+        double f;
+        long long int i;
     } b;
 
     while (1) {
       x = random(); //Still need to get the random numbers
-      if (x == 0){
+      y = random();
+      z = ((x << 32 ) | y);
+      if (z == 0){
         exp -= 31;
       }
       else {
@@ -99,14 +101,14 @@ double my_random_double()
     }
 
     // find the location of the first set bit and compute the exponent
-    while (x & mask) {
+    while (z & mask) {
         mask <<= 1;
         exp--;
     }
 
     // use the remaining bit as the mantissa
-    mant = x >> 8;
-    b.i = (exp << 23) | mant;
+    mant = z >> 11;
+    b.i = (exp << 52) | mant;
 
     return b.f;
 }

@@ -74,6 +74,6 @@ main(int argc, char *argv[])
     time = time_func(iters, my_random_float2);
     printf("%f ms \t my_random_float2\n", time);
 
-    time = time_func(iters, random_double);  //Random double appears to be faster than random float.
-    printf("%f ms \t random_double\n", time);
+    time = time_func(iters, my_random_double);  //Random double appears to be slower than everything else, which is expected as it is dealing with the largest numbers.
+    printf("%f ms \t my_random_double\n", time);
 }

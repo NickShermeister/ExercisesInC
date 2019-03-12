@@ -47,7 +47,7 @@ void print_list(Node **list) {
 }
 
 
-/* Removes and returns the first element of a list.
+/* Removes and returns the first element of a list. <probably value>
 *
 * list: pointer to pointer to Node
 *
@@ -55,7 +55,16 @@ void print_list(Node **list) {
 */
 int pop(Node **list) {
     // FILL THIS IN!
-    return 0;
+    Node* popped_node = *list;
+    if(popped_node == NULL){
+      return -1;
+    }
+    Node* curr_node = popped_node->next;
+    *list = curr_node;
+    int retval = popped_node->val;
+    free(popped_node);
+
+    return retval;
 }
 
 
@@ -66,6 +75,9 @@ int pop(Node **list) {
 */
 void push(Node **list, int val) {
     // FILL THIS IN!
+    Node* temp_node = *list;
+    Node* head_node = make_node(val, temp_node);
+    *list = head_node;
 }
 
 
@@ -80,7 +92,20 @@ void push(Node **list, int val) {
 */
 int remove_by_value(Node **list, int val) {
     // FILL THIS IN!
-    return 0;
+    Node* curr_node = *list;
+    int retval = 0;
+    while(curr_node != NULL && curr_node->next != NULL){
+      // printf("%d\n", curr_node->val);
+      if(curr_node->next->val == val){
+        retval = 1;
+        Node* toRemove = curr_node->next;
+        curr_node->next = toRemove->next;
+        free(toRemove);
+        return retval;
+      }
+      curr_node = curr_node->next;
+    }
+    return retval;
 }
 
 
@@ -92,6 +117,25 @@ int remove_by_value(Node **list, int val) {
 */
 void reverse(Node **list) {
     // FILL THIS IN!
+    Node* last_node = *list;
+    if(last_node == NULL){
+      return;
+    }
+    Node* curr_node = last_node->next;
+    if(curr_node == NULL){
+      return;
+    }
+    Node* future_node = curr_node->next;
+    curr_node->next = last_node;
+    last_node->next = NULL;
+    while(future_node != NULL){
+      last_node = curr_node;
+      curr_node = future_node;
+      future_node = future_node->next;
+      curr_node->next = last_node;
+    }
+    *list = curr_node;
+
 }
 
 
@@ -100,6 +144,7 @@ int main() {
     head->next = make_node(2, NULL);
     head->next->next = make_node(3, NULL);
     head->next->next->next = make_node(4, NULL);
+
 
     Node **list = &head;
     print_list(list);

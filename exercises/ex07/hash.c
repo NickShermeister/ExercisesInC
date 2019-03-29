@@ -179,7 +179,14 @@ int hash_hashable(Hashable *hashable)
 int equal_int (void *ip, void *jp)
 {
     // FILL THIS IN!
-    return 0;
+    int* p1 = (int*) ip;
+    int* p2 = (int*) jp;
+    if(*p1 == *p2){
+      return 1;
+    }
+    else {
+      return 0;
+    }
 }
 
 
@@ -193,7 +200,16 @@ int equal_int (void *ip, void *jp)
 int equal_string (void *s1, void *s2)
 {
     // FILL THIS IN!
-    return 0;
+    char* str1 = (char*) s1;
+    char* str2 = (char*) s2;
+    while(*str1 != NULL && *str2 != NULL){
+      if(str1[0] != str2[0]){
+        return 0;
+      }
+      str1 += 4;
+      str2 += 4;
+    }
+    return 1;
 }
 
 
@@ -208,6 +224,12 @@ int equal_string (void *s1, void *s2)
 int equal_hashable(Hashable *h1, Hashable *h2)
 {
     // FILL THIS IN!
+    if(h1->equal == h2->equal){
+      return h1->equal(h1->key, h2->key);
+    }
+    else{
+      return 0;
+    }
     return 0;
 }
 
@@ -297,6 +319,29 @@ Node *prepend(Hashable *key, Value *value, Node *rest)
 Value *list_lookup(Node *list, Hashable *key)
 {
     // FILL THIS IN!
+    Node* list2 = list;
+    while(1){
+      // printf("step1\n");
+      // print_node(list2);
+      // print_hashable(key);
+      if(equal_hashable(key, list2->key)){
+        // printf("step2\n");
+        return list2->value;
+      }
+
+      else {
+        // printf("step3\n");
+        if(list2->next != NULL){
+          // printf("step4\n");
+          list2 = list2->next;
+        }
+        else {
+          // printf("step5\n");
+          return NULL;
+        }
+      }
+      // printf("steplast\n");
+    }
     return NULL;
 }
 
@@ -341,7 +386,32 @@ void print_map(Map *map)
 /* Adds a key-value pair to a map. */
 void map_add(Map *map, Hashable *key, Value *value)
 {
-    // FILL THIS IN!
+  // FILL THIS IN!
+  Node ** curr_bucket = map->lists;
+  // printf("part 1 of map_add\n");
+  if((*curr_bucket) == NULL){
+    // printf("addinig hashabl0\n");
+    *curr_bucket = prepend(key, value, *curr_bucket);
+    return;
+  }
+  while((*curr_bucket)->next != NULL){
+    // printf("While of map_add\n");
+    if(equal_hashable(key, (*curr_bucket)->key)){
+      // printf("addinig hashable1\n");
+      *curr_bucket = prepend(key, value, *curr_bucket);
+      return;
+    }
+    curr_bucket = &((*curr_bucket)->next);
+  }
+  // printf("part 2 of map_add\n");
+  if(equal_hashable(key, (*curr_bucket)->key)){
+    *curr_bucket = prepend(key, value, *curr_bucket);
+    return;
+  }
+  else{ //Currently doesn't resize the saved space, assuming that we won't go over in space
+    (*curr_bucket)->next = prepend(key, value, NULL);
+  }
+
 }
 
 
@@ -349,6 +419,23 @@ void map_add(Map *map, Hashable *key, Value *value)
 Value *map_lookup(Map *map, Hashable *key)
 {
     // FILL THIS IN!
+    Node ** curr_bucket = map->lists;
+    // printf("part 1 of map_add\n");
+    if((*curr_bucket) == NULL){
+      // printf("addinig hashabl0\n");
+      // *curr_bucket = prepend(key, value, *curr_bucket);
+      return NULL;
+    }
+    while((*curr_bucket) != NULL){
+      // printf("While of map_add\n");
+      if(equal_hashable(key, (*curr_bucket)->key)){
+        // printf("addinig hashable1\n");
+        // *curr_bucket = prepend(key, value, *curr_bucket);
+        return (*curr_bucket)->value;
+      }
+      curr_bucket = &((*curr_bucket)->next);
+    }
+
     return NULL;
 }
 
@@ -367,6 +454,24 @@ int main ()
     Hashable *hashable1 = make_hashable_int (1);
     Hashable *hashable2 = make_hashable_string ("Apple");
     Hashable *hashable3 = make_hashable_int (2);
+
+    int test1 = 1;
+    int test2 = 1;
+    int test3 = 2;
+
+    char* tests1 = "hi";
+    char* tests2 = "hi";
+    char* tests3 = "bye";
+    // printf("Int test1: %i\n", equal_int(&test1, &test2));
+    // printf("Int test2: %i\n", equal_int(&test1, &test3));
+    // printf("Char test1: %i\n", equal_int(tests1, tests2));
+    // printf("Char test2: %i\n", equal_int(tests1, tests3));
+    //
+    // printf("Hashable Equals Test1: %i\n",equal_hashable(hashable1, hashable1));
+    // printf("Hashable Equals Test2: %i\n",equal_hashable(hashable1, hashable2));
+
+
+
 
     // make a list by hand
     Value *value1 = make_int_value (17);

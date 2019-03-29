@@ -5,7 +5,14 @@ Based on an example from http://www.learn-c.org/en/Linked_lists
 Copyright 2018 Allen Downey
 License: Creative Commons Attribution-ShareAlike 3.0
 
+malloc: 1
+calloc: nd
+free: 1
+realloc: if m > n,  1; otherwise m
+
 */
+
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -54,6 +61,24 @@ void print_list(Node *list) {
 */
 Node *pop(Node *list, int *value_p) {
     // FILL THIS IN
+    Node * curr= list;
+    if(curr->val == *value_p | curr->next == NULL){
+      return curr->next;
+    }
+    Node * next = curr->next;
+    while(next->val != *value_p){
+      if(curr->next != NULL){
+        curr = curr->next;
+        next = curr -> next;
+      }
+      else {
+        curr->next = NULL;
+      }
+    }
+    if(next->val == *value_p){
+      free(curr->next);
+      curr->next = next->next;
+    }
     return list;
 }
 

@@ -20,12 +20,11 @@ void iterator(gpointer key, gpointer value, gpointer user_data) {
 
 int main(int argc, char** argv) {
 
-  int i;
   //Make sure that we're starting at the right arg; we know this based on what we take in (every valid arg increments this).
   int start = 1;
-  int append = 0;
   int opt;
-  FILE *out = fopen("answers.txt", "r");
+  // FILE *out = fopen("answers.txt", "r");
+  FILE *out;
 
   while((opt = getopt(argc, argv, "f")) != -1)
   {
@@ -34,6 +33,10 @@ int main(int argc, char** argv) {
           case 'f':
             start++;
             out = fopen(argv[start], "r");
+            if(out == NULL){
+              printf("File entered is not a valid file. Please try again.");
+              return -1;
+            }
             break;
           default:
             printf("That is not a valid input arguments. Refer to -h for what inputs are valid. Input was: %c\n", opt);
@@ -48,8 +51,10 @@ int main(int argc, char** argv) {
 
   GHashTable* hash = g_hash_table_new(g_str_hash, g_str_equal);
   int temp;
+  int total_wordcount = 0;
 
   while (fscanf(out, " %1023s", x) == 1) {
+    total_wordcount++;
     temp = 1;
     pointer1 = &x[0];
     pointer2 = &y[0];
@@ -95,8 +100,10 @@ int main(int argc, char** argv) {
 
   }
 
-  g_hash_table_foreach(hash, (GHFunc)iterator, "The number of occurances of %s is %d\n");
+  g_hash_table_foreach(hash, (GHFunc)iterator, "The number of occurances of %s:\t\t %d\n");
 
+  printf("The total word count was: %d\n", total_wordcount);
+  //Fun fact: apparently "villa" is the last unique word in BOTH frankenstein and sherlock holmes!!!!! Feel free to try using the two .txt files in this directory.
 
  g_hash_table_destroy(hash);
  fclose(out);

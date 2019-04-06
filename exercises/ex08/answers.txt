@@ -1,0 +1,9 @@
+Q: Where is GLib from and why does it exist? Who uses it, and for what? Would it have been better if they had given it a name less likely to be confused with glibc?
+A: GLib is a bundle of libraries that were separated from GTK so they can be used in software other than GNOME. There are currently 3 libraries in the bundle; there were 5. GLib is used by people who want pre-constructed advanced data structures (including but not limited to linked lists, hash tables, dynamic strings, and balanced binary trees).
+It would have been better to change the name because glibc is the core libraries for GNU/Linux and although glib may be useful to those systems it isn't required.
+
+Q: What are the most important pros and cons of using GLib, as opposed to another library, or just using core C features?
+A: The biggest pros are that you don't have to reinvent the wheel when using GLib, and it seems to implement many useful libraries. The cons is that when using GLib you appear to import the entire library (which takes up a lot of space). You also may want to customize data structures, which it doesn't seem great at doing.
+
+Q: What do you have to do to compile and run a "Hello GLib" example?
+A: You have to tell the compiler where to find glib. This can be done by using the phrase `pkg-config --cflags --libs glib-2.0` (similar to gtk!)

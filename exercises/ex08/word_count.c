@@ -19,11 +19,9 @@ void iterator(gpointer key, gpointer value, gpointer user_data) {
 }
 
 int main(int argc, char** argv) {
-
   //Make sure that we're starting at the right arg; we know this based on what we take in (every valid arg increments this).
   int start = 1;
   int opt;
-  // FILE *out = fopen("answers.txt", "r");
   FILE *out;
   int num_args = 0;
 
@@ -40,6 +38,7 @@ int main(int argc, char** argv) {
               return -1;
             }
             break;
+
           default:
             printf("That is not a valid input arguments. Input file as -f filename. Input was: %c\n", opt);
             return -1;
@@ -49,10 +48,6 @@ int main(int argc, char** argv) {
   if(num_args == 0){
     printf("No file entered. Opening answers.txt.\n");
     out = fopen("answers.txt", "r");
-    if(out == NULL){
-      printf("Error opening answers.txt\n");
-      return -1;
-    }
   }
 
   char x[BUFFERSIZE]; //in case there are some really long words
@@ -79,8 +74,7 @@ int main(int argc, char** argv) {
     while (*pointer1)
     {
        if (ispunct(*pointer1))
-       {
-          // Skip because [punct]
+       {  // Skip because [punct]
           pointer1++;
           // printf("Is punctuation!: %c\n", *pointer1);
        }
@@ -121,7 +115,6 @@ int main(int argc, char** argv) {
 
  g_hash_table_destroy(hash);
  fclose(out);
-
 
  return 0;
 }

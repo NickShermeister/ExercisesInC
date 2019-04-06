@@ -25,9 +25,11 @@ int main(int argc, char** argv) {
   int opt;
   // FILE *out = fopen("answers.txt", "r");
   FILE *out;
+  int num_args = 0;
 
   while((opt = getopt(argc, argv, "f")) != -1)
   {
+    num_args++;
       switch(opt)
       {
           case 'f':
@@ -39,9 +41,18 @@ int main(int argc, char** argv) {
             }
             break;
           default:
-            printf("That is not a valid input arguments. Refer to -h for what inputs are valid. Input was: %c\n", opt);
+            printf("That is not a valid input arguments. Input file as -f filename. Input was: %c\n", opt);
             return -1;
       }
+  }
+
+  if(num_args == 0){
+    printf("No file entered. Opening answers.txt.\n");
+    out = fopen("answers.txt", "r");
+    if(out == NULL){
+      printf("Error opening answers.txt\n");
+      return -1;
+    }
   }
 
   char x[BUFFERSIZE]; //in case there are some really long words
@@ -50,6 +61,12 @@ int main(int argc, char** argv) {
   char * pointer2;
 
   GHashTable* hash = g_hash_table_new(g_str_hash, g_str_equal);
+
+  if(hash == NULL){
+    printf("Unable to create hash table.\n");
+    return -1;
+  }
+
   int temp;
   int total_wordcount = 0;
 
@@ -83,9 +100,6 @@ int main(int argc, char** argv) {
           pointer2++;
        }
     }
-
-    *pointer2 = 0;
-    // puts(y);
 
     if(g_hash_table_contains(hash, y)){
       temp = g_hash_table_lookup(hash, y);

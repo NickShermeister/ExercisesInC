@@ -20,6 +20,12 @@ void error(char *msg)
     exit(1);
 }
 
+void child_code(int i)
+{
+    // sleep(i);
+    printf("\n\nHello from child %d.\n\n", i);
+}
+
 int main(int argc, char *argv[])
 {
     if (argc < 2) {
@@ -38,8 +44,17 @@ int main(int argc, char *argv[])
     int num_feeds = 5;
     char *search_phrase = argv[1];
     char var[255];
+    int status;
+    pid_t pid;
+
 
     for (int i=0; i<num_feeds; i++) {
+      pid = fork();
+      if(pid == -1){
+        printf("Error creating child %i\n", i);
+        exit(1);
+      }
+      if(pid != 0){
         sprintf(var, "RSS_FEED=%s", feeds[i]);
         char *vars[] = {var, NULL};
 
@@ -47,6 +62,12 @@ int main(int argc, char *argv[])
         if (res == -1) {
             error("Can't run script.");
         }
+        child_code(i);
+        exit(1);
+      }
+
     }
+
+    exit(0);
     return 0;
 }

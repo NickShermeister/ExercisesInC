@@ -19,6 +19,7 @@ License: MIT License https://opensource.org/licenses/MIT
 // error information
 extern int errno;
 
+int testGlobal = 1;
 
 // get_seconds returns the number of seconds since the
 // beginning of the day, with microsecond precision
@@ -46,6 +47,8 @@ int main(int argc, char *argv[])
     double start, stop;
     int i, num_children;
 
+
+
     // the first command-line argument is the name of the executable.
     // if there is a second, it is the number of children to create.
     if (argc == 2) {
@@ -57,11 +60,42 @@ int main(int argc, char *argv[])
     // get the start time
     start = get_seconds();
 
+    int testBeforeForkLocal = 1;
+
     for (i=0; i<num_children; i++) {
 
         // create a child process
         printf("Creating child %d.\n", i);
         pid = fork();
+
+        int * testHeap = malloc(sizeof(int));
+        *testHeap = 1;
+        int testAfterForkLocal = 1;
+
+
+        //This prints out where each thing a process references is.
+        printf("Location of a global variable before editing for process %d: %d\t\t value: %d\n", i, &testGlobal, testGlobal);
+        printf("Location of a local variable before editing created before fork for process %d: %d\t\t value: %d\n", i, &testBeforeForkLocal, testBeforeForkLocal);
+        printf("Location of a local variable before editing created after fork for process %d: %d\t\t value: %d\n", i, &testAfterForkLocal, testAfterForkLocal);
+        printf("Location of a heap variable before editing for process %d: %d\t\t value: %d\n", i, testHeap, *testHeap);
+
+        //Change the values to see what happens, using the child number to try to significantly differentiate the results.
+        testAfterForkLocal = i+10;
+        testBeforeForkLocal = i+10;
+        *testHeap = i+10;
+        testGlobal = i+10;
+
+        //Print the new results
+        printf("Location of a global variable after editing for process %d: %d\t\t value: %d\n", i, &testGlobal, testGlobal);
+        printf("Location of a local variable after editing created before fork for process %d: %d\t\t value: %d\n", i, &testBeforeForkLocal, testBeforeForkLocal);
+        printf("Location of a local variable after editing created after fork for process %d: %d\t\t value: %d\n", i, &testAfterForkLocal, testAfterForkLocal);
+        printf("Location of a heap variable after editing for process %d: %d\t\t value: %d\n", i, testHeap, *testHeap);
+
+        //My results are saying that the locations are the same for all processes despite the values being able to be manipulated separately.
+        //I believe that this is due to the computer mapping the actual locations of the memory to different locations due to some sort of (hashing?) function as to where to physically store the memory.
+
+
+        free(testHeap);
 
         /* check for an error */
         if (pid == -1) {

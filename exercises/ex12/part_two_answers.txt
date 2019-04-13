@@ -1,0 +1,19 @@
+2) Use the Makefile to compile the program and run it. Do any syncronization errors occur?
+A: There were 123121 errors in my test run of counter_array.
+
+3) Compile, run, and confirm that there are no errors now.
+A: done
+
+4) Synchronization takes some time. Comment out the print statements in counter_array.c and counter_array_mutex.c, then recompile and time them. How much overhead is imposed:
+
+counter_array overhead imposed:
+real	0m0.053s
+user	0m0.059s
+sys	0m0.013s
+
+counter_array_mutex overhead imposed:
+real	0m0.179s
+user	0m0.175s
+sys	0m0.151s
+
+Overall, there is a change from 0.125s to 0.505s or approximately a 4x increase in time when using mutex. It imposes the most overhead on the system, with a 11x increase in time when compared to the 3x increase in time for real and user.

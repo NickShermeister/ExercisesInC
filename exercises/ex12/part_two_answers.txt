@@ -9,7 +9,7 @@ A: done
 counter_array overhead imposed:
 real	0m0.053s
 user	0m0.059s
-sys	0m0.013s
+sys	0m0.C013s
 
 counter_array_mutex overhead imposed:
 real	0m0.179s

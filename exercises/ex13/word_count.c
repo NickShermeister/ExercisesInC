@@ -36,6 +36,13 @@ void pair_printor(gpointer value, gpointer user_data)
     printf("%d\t %s\n", pair->freq, pair->word);
 }
 
+void destructor (gpointer pin)
+{
+    Pair *p = (Pair *) pin;
+    g_free(p->word);
+    g_free(p);
+}
+
 
 /* Iterator that prints keys and values. */
 void kv_printor (gpointer key, gpointer value, gpointer user_data)
@@ -47,29 +54,35 @@ void kv_printor (gpointer key, gpointer value, gpointer user_data)
 /* Iterator that adds key-value pairs to a sequence. */
 void accumulator(gpointer key, gpointer value, gpointer user_data)
 {
+  //TODO: Separate from hash map. like went over in class.
     GSequence *seq = (GSequence *) user_data;
     Pair *pair = g_new(Pair, 1);
-    pair->word = (gchar *) key;
-    pair->freq = *(gint *) value;
+    pair->word = g_strdup((gchar*) key);
+    pair->freq = *(gint *)value;
 
     g_sequence_insert_sorted(seq,
         (gpointer) pair,
         (GCompareDataFunc) compare_pair,
         NULL);
+    // g_sequence_free(seq);
 }
 
 /* Increments the frequency associated with key. */
 void incr(GHashTable* hash, gchar *key)
+//Duplicate everything then free key every time.
 {
     gint *val = (gint *) g_hash_table_lookup(hash, key);
 
     if (val == NULL) {
-        gint *val1 = g_new(gint, 1);
+        gint *val1 = g_new(gint, 1); //Here, 1 is in reference to the number of objects! That's why you set a value later.
         *val1 = 1;
-        g_hash_table_insert(hash, key, val1);
+        gchar *key2 = g_strdup(key);
+        g_hash_table_insert(hash, key2 , val1);
     } else {
         *val += 1;
     }
+    // g_free(*key);
+
 }
 
 int main(int argc, char** argv)
@@ -93,7 +106,7 @@ int main(int argc, char** argv)
     (one-L) NUL terminated strings */
     gchar **array;
     gchar line[128];
-    GHashTable* hash = g_hash_table_new(g_str_hash, g_str_equal);
+    GHashTable* hash = g_hash_table_new_full(g_str_hash, g_str_equal, g_free, g_free); //Declare destructors.
 
     // read lines from the file and build the hash table
     while (1) {
@@ -103,21 +116,27 @@ int main(int argc, char** argv)
         array = g_strsplit(line, " ", 0);
         for (int i=0; array[i] != NULL; i++) {
             incr(hash, array[i]);
+            // g_free(array[i]);
         }
+        g_strfreev(array);
     }
     fclose(fp);
+    // g_free(array);
+    // g_free(filename);
+
 
     // print the hash table
     // g_hash_table_foreach(hash, (GHFunc) kv_printor, "Word %s freq %d\n");
 
     // iterate the hash table and build the sequence
-    GSequence *seq = g_sequence_new(NULL);
+    GSequence *seq = g_sequence_new((GDestroyNotify) destructor);
     g_hash_table_foreach(hash, (GHFunc) accumulator, (gpointer) seq);
 
     // iterate the sequence and print the pairs
     g_sequence_foreach(seq, (GFunc) pair_printor, NULL);
 
     // try (unsuccessfully) to free everything
+    // g_hash_table_foreach(hash, (GHFunc) freeer, (gpointer) seq);
     g_hash_table_destroy(hash);
     g_sequence_free(seq);
 

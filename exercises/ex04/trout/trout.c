@@ -1,6 +1,5 @@
 #include "trout.h"
 #include "util.h"
-#include "main.c"
 
 
 /* variables we might want to configure */
